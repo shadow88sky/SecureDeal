@@ -57,6 +57,7 @@ contract SecureDeal is ReentrancyGuard {
     function releasePayment(uint _dealId) public nonReentrant {
         Deal storage deal = deals[_dealId];
         DealDetail storage detail = dealDetails[_dealId];
+  
 
         require(msg.sender == deal.client, "Only client can release payment");
         require(deal.currentMilestone < deal.totalMilestones, "All milestones have been paid");
@@ -86,14 +87,8 @@ contract SecureDeal is ReentrancyGuard {
         uint256 refundAmount = (deal.totalMilestones - deal.currentMilestone) * deal.amountPerMilestone;
         require(detail.total >= detail.withdrawn + refundAmount, "Insufficient funds in deal");
 
-        // 调试信息
-        emit Debug("refundAmount", refundAmount);
-        emit Debug("detail.total", detail.total);
-        emit Debug("detail.withdrawn", detail.withdrawn);
-
         deal.refunded = true; // 标记为已退款
         detail.withdrawn += refundAmount;
-
         // 在转账之前更新状态，以防止重入攻击
         payable(deal.client).transfer(refundAmount);
 

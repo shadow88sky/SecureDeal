@@ -6,8 +6,8 @@ import "../src/SecureDeal.sol";
 
 contract SecureDealTest is Test {
     SecureDeal secureDeal;
-    address client = address(0x1);
-    address developer = address(0x2);
+    address client = address(0x2);
+    address developer = address(0x3);
 
     function setUp() public {
         secureDeal = new SecureDeal();
@@ -44,6 +44,7 @@ contract SecureDealTest is Test {
     }
 
     function testRefundClient() public {
+ 
         uint totalMilestones = 3;
         uint amountPerMilestone = 1 ether;
         uint totalPayment = totalMilestones * amountPerMilestone;
@@ -58,10 +59,10 @@ contract SecureDealTest is Test {
         vm.prank(developer);
         secureDeal.refundClient(dealId);
 
-        // (, uint256 withdrawn) = secureDeal.getDealDetail(dealId);
-        // assertEq(withdrawn, amountPerMilestone * 2);
+        (uint256 total, uint256 withdrawn) = secureDeal.getDealDetail(dealId);
+        assertEq(withdrawn, total);
 
-        // assertEq(address(secureDeal).balance, 0);
-        // assertEq(address(client).balance, totalPayment - amountPerMilestone);
+        assertEq(address(secureDeal).balance, 0);
+        assertEq(address(client).balance, totalPayment - amountPerMilestone);
     }
 }
