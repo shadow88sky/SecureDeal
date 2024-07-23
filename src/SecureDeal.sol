@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol";
 
 contract SecureDeal is ReentrancyGuard {
     struct Deal {
@@ -26,6 +26,9 @@ contract SecureDeal is ReentrancyGuard {
     event DealCreated(uint256 dealId, address client, address developer, uint totalMilestones, uint amountPerMilestone);
     event PaymentReleased(uint256 dealId, uint currentMilestone);
     event DealRefunded(uint256 dealId, address client, uint256 amount);
+
+    // 调试事件
+    event Debug(string message, uint256 value);
 
     // 创建交易
     function createDeal(address _developer, uint _totalMilestones, uint _amountPerMilestone) public payable returns(uint256) {
@@ -82,6 +85,11 @@ contract SecureDeal is ReentrancyGuard {
 
         uint256 refundAmount = (deal.totalMilestones - deal.currentMilestone) * deal.amountPerMilestone;
         require(detail.total >= detail.withdrawn + refundAmount, "Insufficient funds in deal");
+
+        // 调试信息
+        emit Debug("refundAmount", refundAmount);
+        emit Debug("detail.total", detail.total);
+        emit Debug("detail.withdrawn", detail.withdrawn);
 
         deal.refunded = true; // 标记为已退款
         detail.withdrawn += refundAmount;
