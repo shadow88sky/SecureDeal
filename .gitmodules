@@ -1,0 +1,3 @@
+[submodule "secure_deal/lib/forge-std"]
+	path = secure_deal/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
